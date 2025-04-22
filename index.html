@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ToK: Judging Adequate Evidence</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .question-box {
+      margin-top: 20px;
+    }
+    .question-text {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .img-container {
+      margin: 15px 0;
+    }
+    .img-container img {
+      width: 100%;
+      border-radius: 8px;
+      max-height: 300px;
+      object-fit: cover;
+    }
+    .buttons {
+      margin-top: 10px;
+    }
+    .buttons button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .correct { background-color: #28a745; color: white; }
+    .wrong { background-color: #dc3545; color: white; }
+    .next-btn {
+      background-color: #007bff;
+      color: white;
+    }
+    .feedback {
+      margin-top: 15px;
+      font-size: 16px;
+      font-style: italic;
+    }
+    .score-box {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ToK Evidence Evaluation Game</h1>
+    <p><strong>Prompt:</strong> “How can we judge when evidence is adequate?”</p>
+    <div id="gameArea"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "Alan MacMasters was the inventor of the electric toaster, according to Wikipedia and BBC.",
+        img: "https://upload.wikimedia.org/wikipedia/en/4/41/Alan_MacMasters_Wikipedia_hoax.png",
+        answer: "inadequate",
+        explanation: "Though it appeared in Wikipedia and the BBC, this was a hoax created by students. It highlights how even credible-looking sources can be misleading if not scrutinized."
+      },
+      {
+        text: "NASA confirms that Earth revolves around the Sun based on decades of astronomical data.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Heliocentric_model.svg/800px-Heliocentric_model.svg.png",
+        answer: "adequate",
+        explanation: "This claim is backed by centuries of observational evidence, peer-reviewed studies, and global scientific consensus. The evidence here is thorough and reproducible."
+      },
+      {
+        text: "A viral tweet claims that drinking lemon juice daily cures all forms of cancer.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Twitter_logo_new.svg/2560px-Twitter_logo_new.svg.png",
+        answer: "inadequate",
+        explanation: "Extraordinary health claims require rigorous scientific evidence. A tweet isn’t reliable without peer-reviewed clinical studies to back it up."
+      },
+      {
+        text: "Photos circulated online claim to show a mermaid found on a beach, with 'evidence' from an unknown 'oceanography blog.'",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Mermaid_statue_Copenhagen.jpg/640px-Mermaid_statue_Copenhagen.jpg",
+        answer: "inadequate",
+        explanation: "The source is anonymous and not verified. Extraordinary claims require extraordinary evidence from credible institutions."
+      },
+      {
+        text: "An article from the World Health Organization states that vaccines undergo extensive testing and peer review before approval.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WHO_Logo.svg/1200px-WHO_Logo.svg.png",
+        answer: "adequate",
+        explanation: "The WHO is a credible, globally recognized health body. Its claims are supported by international peer-reviewed science."
+      },
+      {
+        text: "A 2013 blog post claims Shakespeare didn’t exist and was actually a group of writers using a fake name.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Shakespeare.jpg",
+        answer: "inadequate",
+        explanation: "There’s no strong evidence supporting this conspiracy; it's based on speculative interpretations, not historical consensus."
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    const gameArea = document.getElementById("gameArea");
+
+    function loadQuestion() {
+      const q = questions[current];
+      gameArea.innerHTML = `
+        <div class="question-box">
+          <div class="question-text">${q.text}</div>
+          <div class="img-container">
+            <img src="${q.img}" alt="related image">
+          </div>
+          <div class="buttons">
+            <button onclick="checkAnswer('adequate')">Adequate</button>
+            <button onclick="checkAnswer('inadequate')">Inadequate</button>
+          </div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      `;
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const feedback = document.getElementById("feedback");
+
+      if (selected === q.answer) {
+        score++;
+        feedback.innerHTML = `<span class="correct">Correct:</span> ${q.explanation}`;
+        feedback.style.color = "#28a745";
+      } else {
+        feedback.innerHTML = `<span class="wrong">Incorrect:</span> ${q.explanation}`;
+        feedback.style.color = "#dc3545";
+      }
+
+      document.querySelector(".buttons").innerHTML += `
+        <button class="next-btn" onclick="nextQuestion()">Next</button>
+      `;
+
+      Array.from(document.querySelectorAll(".buttons button")).forEach(btn => btn.disabled = true);
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        showFinal();
+      }
+    }
+
+    function showFinal() {
+      gameArea.innerHTML = `
+        <h2>Final Score: ${score} / ${questions.length}</h2>
+        <p>Great job reflecting on what makes evidence reliable.</p>
+        <div class="score-box">
+          Consider: What factors do you now think are most important in judging if evidence is trustworthy?
+        </div>
+      `;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
